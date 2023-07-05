@@ -13,6 +13,7 @@ interface IEmits {
   (e: 'cancel'): void
   (e: 'clear'): void
   (e: 'update:modelValue', v?: string | number): void
+  (e: 'inputClick'): void
 }
 const emits = defineEmits<IEmits>()
 
@@ -28,25 +29,29 @@ const onClear = () => {
   emits('clear')
 }
 </script>
+
 <template>
   <div class="op-search" :class="{ 'op-search--show-action': showAction }" :style="{ background }">
     <div class="op-search__content" :class="shape ? `op-search__content--${shape}` : ''">
       <div class="op-cell op-search__field">
-        <div class="op-field__left-icon"></div>
+        <div class="op-field__left-icon">
+          <VanIcon name="search" />
+        </div>
         <div class="op-cell__value">
-          <div class="op-filed__body">
+          <div class="op-field__body">
             <input
               type="search"
               class="op-field__control"
               :value="modelValue"
               :placeholder="placeholder"
               @keypress="onKeypress"
+              @click="emits('inputClick')"
               @input="(e) => emits('update:modelValue', (e.target as HTMLInputElement).value)"
             />
             <div v-if="$slots['right-icon']" class="op-field__right-icon">
-              <slot name="right-icon"></slot>"
+              <slot name="right-icon"></slot>
             </div>
-            <VanIcon v-else-if="modelValue" name="clear" class="op-field__clear" @click="onClick" />
+            <VanIcon v-else-if="modelValue" name="clear" class="op-field__clear" @click="onClear" />
           </div>
         </div>
       </div>
@@ -59,7 +64,6 @@ const onClear = () => {
   </div>
 </template>
 
-
 <style lang="scss">
 :root {
   --op-search-padding: 10px var(--van-padding-sm);
@@ -71,6 +75,7 @@ const onClear = () => {
   --op-search-action-font-size: var(--van-font-size-md);
   --op-search-input-height: 34px;
 }
+
 .op-search {
   display: flex;
   align-items: center;

@@ -1,32 +1,69 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { ISearchRecomment } from '@/types'
-
+import OpSearch from '@/components/OpSearch.vue'
 interface IProps {
   recomments: ISearchRecomment[]
 }
+
 defineProps<IProps>()
+
+const searchValue = ref('test')
+const onSearch = (v?: string | number) => {
+  console.log('====search', v);
+}
+
+const onCancel = () => {
+  console.log('====cancel');
+  
+}
+
+const onClear = () => {
+  console.log('====clear');
+  
+}
+
+interface IEmits {
+  (e: 'searchClick'): void
+}
+const emits = defineEmits<IEmits>()
 </script>
+
 <template>
   <div class="home-top">
     <div class="top">
-      <img class="location-icon" src="@/assets/imgs/index_page/location.png" alt="" />
+      <img class="location-icon" src="@/assets/imgs/index_page/location.png" />
       <div class="location">幸福小区(北一区东南门)</div>
       <img class="shopcart-icon" src="@/assets/imgs/index_page/shopcart.png" />
       <img class="comments-icon" src="@/assets/imgs/index_page/comments.png" />
     </div>
-    <VanSearch
+    <!-- <VanSearch
       shape="round"
       background="linear-gradient(to right, rgb(53, 200, 250), rgb(31, 175, 243))"
-      placeholder="世界茶饮"
+      placeholder="世界茶饮 35减2"
     >
       <template #right-icon>
         <div>搜索</div>
       </template>
-    </VanSearch>
+    </VanSearch> -->
+    <VanSticky>
+      <OpSearch
+      v-model="searchValue"
+        shape="round"
+        background="linear-gradient(to right, rgb(53, 200, 250), rgb(31, 175, 243))"
+        placeholder="世界茶饮 35减2"
+        @inputClick="emits('searchClick')"
+        @search="onSearch"
+        @cancel="onCancel"
+        @clear="onClear"
+      >
+        <template #right-icon>
+          <div @click="emits('searchClick')">搜索</div>
+        </template>
+      </OpSearch>
+    </VanSticky>
     <div class="search-recommend">
-      <div v-for="v in recomments" :key="v.value" class="tag">
-        {{ v.label }}
-      </div>
+      <div v-for="v in recomments" :key="v.value" class="tag">{{ v.label }}</div>
     </div>
   </div>
 </template>
@@ -63,7 +100,7 @@ defineProps<IProps>()
     display: flex;
     padding: 0 10px 8px;
     .tag {
-      font-style: 12px;
+      font-size: 12px;
       border-radius: 10px;
       background: rgb(242, 242, 242, 0.3);
       padding: 2px 8px;
