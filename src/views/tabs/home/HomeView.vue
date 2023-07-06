@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import TheTop from './components/TheTop.vue'
+import SearchView from '@/views/search/SearchView.vue'
+import {useToggle} from '@/use/useToggle'
 
 const recomments = [
   {
@@ -11,16 +13,26 @@ const recomments = [
     label: '色拉'
   }
 ]
+const [isSearchViewShown, toggleSearchView] = useToggle(false)
 </script>
 
 <template>
   <div class="home-page">
-    <TheTop :recomments="recomments" />
+    <Transition name="fade">
+
+      <SearchView v-if="isSearchViewShown" @cancel="toggleSearchView"></SearchView>
+    </Transition>
+    <TheTop :recomments="recomments" @searchClick="toggleSearchView"/>
   </div>
 </template>
 
-<style>
-.test {
-  font-size: 39px;
+<style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, 
+.fade-enter-leave {
+  opacity: 0;
 }
 </style>

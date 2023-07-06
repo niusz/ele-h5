@@ -8,21 +8,6 @@ interface IProps {
 
 defineProps<IProps>()
 
-const searchValue = ref('test')
-const onSearch = (v?: string | number) => {
-  console.log('====search', v);
-}
-
-const onCancel = () => {
-  console.log('====cancel');
-  
-}
-
-const onClear = () => {
-  console.log('====clear');
-  
-}
-
 interface IEmits {
   (e: 'searchClick'): void
 }
@@ -46,22 +31,16 @@ const emits = defineEmits<IEmits>()
         <div>搜索</div>
       </template>
     </VanSearch> -->
-    <VanSticky>
       <OpSearch
-      v-model="searchValue"
         shape="round"
         background="linear-gradient(to right, rgb(53, 200, 250), rgb(31, 175, 243))"
         placeholder="世界茶饮 35减2"
         @inputClick="emits('searchClick')"
-        @search="onSearch"
-        @cancel="onCancel"
-        @clear="onClear"
       >
         <template #right-icon>
           <div @click="emits('searchClick')">搜索</div>
         </template>
       </OpSearch>
-    </VanSticky>
     <div class="search-recommend">
       <div v-for="v in recomments" :key="v.value" class="tag">{{ v.label }}</div>
     </div>
