@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type {IHomeInfo} from '@/types'
+import type {ICountdown, IHomeInfo} from '@/types'
 import TheTop from './components/TheTop.vue'
 import TheTransformer from './components/TheTransformer.vue'
+import ScrollBar from './components/ScrollBar.vue'
+import CountDown from './components/CountDown.vue'
 import SearchView from '@/views/search/SearchView.vue'
 import {useToggle} from '@/use/useToggle'
 import {useAsync} from '@/use/useAsync'
@@ -10,7 +12,14 @@ import OpLoadingView  from './components/OpLoadingView.vue'
 
 const [isSearchViewShown, toggleSearchView] = useToggle(false)
 
-const {data, pending} = useAsync(fetchHomePageData, {} as IHomeInfo)
+const { data, pending } = useAsync(fetchHomePageData, {
+  banner: [],
+  searchRecomments: [],
+  transformer: [],
+  scrollBarInfoList: [],
+  countdown: {} as ICountdown,
+  activities: [],
+} as IHomeInfo)
 </script>
 
 <template>
@@ -26,7 +35,11 @@ const {data, pending} = useAsync(fetchHomePageData, {} as IHomeInfo)
         <img v-for="v in data.banner" :key="v.imgUrl"
         :src="v.imgUrl"/>
       </div>
-      <TheTransformer :data="data.transformer"></TheTransformer>
+      <TheTransformer :data="data.transformer"/>
+      <ScrollBar :data="data.scrollBarInfoList"/>
+      <div class="home-page__activity">
+        <CountDown :data="data.countdown"/>
+      </div>
     </OpLoadingView>
   </div>
 </template>
@@ -50,6 +63,12 @@ const {data, pending} = useAsync(fetchHomePageData, {} as IHomeInfo)
       padding-top: 10px;
       background: white;
     }
+  }
+
+  &__activity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>
