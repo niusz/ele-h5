@@ -8,3 +8,7 @@ export const rAF = requestAnimationFrame || function (callback) {
 export const cancelRAF = cancelAnimationFrame || function (id: number) {
     clearTimeout(id)
 }
+
+export const doubleRaf = (fn: () => void) => {
+    rAF(() => rAF(fn))
+}
