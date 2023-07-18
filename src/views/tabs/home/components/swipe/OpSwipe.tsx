@@ -1,5 +1,5 @@
 import { createNamespace } from "@/utils/create"
-import { defineComponent, reactive, ref, computed } from "vue"
+import { defineComponent, reactive, ref, computed, onMounted, onBeforeMount, onBeforeUnmount, watch } from "vue"
 import { clamp } from '@/utils/format'
 import { doubleRaf } from "@/utils/raf"
 const [name, bem] = createNamespace('swipe')
@@ -64,6 +64,9 @@ export default defineComponent({
             }
             return style
         })
+        const activeIndicator = computed(() => {
+            return (state.active + count.value) % count.value
+        })
 
         const minOffset = computed(() => {
             if (state.rect) {
@@ -99,8 +102,8 @@ export default defineComponent({
             if (props.loop) {
                 // 正向滚动，从左向右
                 if (children[0] && targetOffset !== minOffset.value) {
-                    const outRightBound = targetOffset > 0
-                    children[0].setOffset(outRightBound ? trackSize : 0)
+                    const outRightBound = targetOffset < minOffset.value
+                    children[0].setOffset(outRightBound ? trackSize.value : 0)
                 }
                 // 反向滚动,从右向左
                 if (children[count.value - 1] && targetOffset !== 0) {
@@ -157,13 +160,28 @@ export default defineComponent({
             state.height = rect.height
             autoplay()
         }
+
+        const renderDot = (_: string, index: number) => {
+            const active = index === activeIndicator.value
+            return <i class={bem('indicator', { active })}></i>
+        }
+        const renderIndicator = () => {
+            if (props.showIndicators) {
+                return <div class={bem('indicators')}>
+                    {Array(count.value).fill('').map(renderDot)}
+                </div>
+            }
+        }
+
+        onMounted(init)
+        onBeforeUnmount(stopAutoPlay)
+        watch(() => props.autoplay, autoplay)
         return () => {
             <div ref={root} class={bem()}>
-
                 <div ref={track} style={trackStyle.value} class={bem('track')}>
                     {slots.default?.()}
                 </div>
-
+                {renderIndicator()}
             </div>
         }
     }
